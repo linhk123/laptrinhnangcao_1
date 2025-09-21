@@ -1,107 +1,93 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
-class ArrayProcessor
+class TextProcessor
 {
-    private int[] arr;
+    private string text;
 
-    // Nhap mang tu ban phim
+    // Nhap van ban tu ban phim
     public void Input()
     {
-        Console.Write("Nhap so phan tu cua mang: ");
-        int n = int.Parse(Console.ReadLine());
-        arr = new int[n];
-        for (int i = 0; i < n; i++)
-        {
-            Console.Write($"arr[{i}] = ");
-            arr[i] = int.Parse(Console.ReadLine());
-        }
+        Console.WriteLine("Nhap van ban:");
+        text = Console.ReadLine();
     }
 
-    // Hien thi mang
-    public void Display()
+    // Chuan hoa van ban
+    public string Normalize()
     {
-        foreach (int x in arr)
-        {
-            Console.Write(x + " ");
-        }
-        Console.WriteLine();
-    }
+        if (string.IsNullOrWhiteSpace(text)) return "";
 
-    // Bubble Sort
-    public void BubbleSort()
-    {
-        int n = arr.Length;
-        for (int i = 0; i < n - 1; i++)
+        // Xoa khoang trang thua
+        text = Regex.Replace(text, @"\s+", " ").Trim();
+
+        // Viet hoa ky tu dau moi cau
+        char[] delimiters = { '.', '!', '?' };
+        string[] sentences = text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+        for (int i = 0; i < sentences.Length; i++)
         {
-            for (int j = 0; j < n - i - 1; j++)
+            string s = sentences[i].Trim();
+            if (s.Length > 0)
             {
-                if (arr[j] > arr[j + 1])
-                {
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
-            }
-        }
-    }
-
-    // Quick Sort
-    public void QuickSort(int left, int right)
-    {
-        int i = left, j = right;
-        int pivot = arr[(left + right) / 2];
-
-        while (i <= j)
-        {
-            while (arr[i] < pivot) i++;
-            while (arr[j] > pivot) j--;
-            if (i <= j)
-            {
-                int temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-                i++;
-                j--;
+                sentences[i] = char.ToUpper(s[0]) + (s.Length > 1 ? s.Substring(1) : "");
             }
         }
 
-        if (left < j) QuickSort(left, j);
-        if (i < right) QuickSort(i, right);
+        // Ghép lai voi dau cham cuoi
+        text = string.Join(". ", sentences).Trim();
+        if (!text.EndsWith(".")) text += ".";
+
+        return text;
     }
 
-    // Linear Search
-    public int LinearSearch(int key)
+    // Dem tong so tu
+    public int CountWords()
     {
-        for (int i = 0; i < arr.Length; i++)
+        if (string.IsNullOrWhiteSpace(text)) return 0;
+        return text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+    }
+
+    // Dem so tu khac nhau
+    public int CountDistinctWords()
+    {
+        if (string.IsNullOrWhiteSpace(text)) return 0;
+        return text.ToLower()
+                   .Split(new char[] { ' ', '.', ',', '!', '?' }, StringSplitOptions.RemoveEmptyEntries)
+                   .Distinct()
+                   .Count();
+    }
+
+    // Tan suat xuat hien
+    public Dictionary<string, int> WordFrequency()
+    {
+        Dictionary<string, int> freq = new Dictionary<string, int>();
+        string[] words = text.ToLower()
+                             .Split(new char[] { ' ', '.', ',', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string w in words)
         {
-            if (arr[i] == key)
-                return i;
+            if (freq.ContainsKey(w)) freq[w]++;
+            else freq[w] = 1;
         }
-        return -1;
+        return freq;
     }
 
-    // Binary Search
-    public int BinarySearch(int key)
+    // Hien thi ket qua
+    public void DisplayResult()
     {
-        int left = 0, right = arr.Length - 1;
-        while (left <= right)
+        Console.WriteLine("\nVan ban da chuan hoa:");
+        Console.WriteLine(text);
+
+        Console.WriteLine($"\nTong so tu: {CountWords()}");
+        Console.WriteLine($"So tu khac nhau: {CountDistinctWords()}");
+
+        Console.WriteLine("\nTan suat xuat hien:");
+        foreach (var kv in WordFrequency())
         {
-            int mid = (left + right) / 2;
-            if (arr[mid] == key) return mid;
-            else if (arr[mid] < key) left = mid + 1;
-            else right = mid - 1;
+            Console.WriteLine($"{kv.Key} : {kv.Value}");
         }
-        return -1;
-    }
-
-    public int[] GetArray()
-    {
-        return arr;
-    }
-
-    public void SetArray(int[] newArr)
-    {
-        arr = newArr;
     }
 }
 
@@ -109,40 +95,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        ArrayProcessor ap = new ArrayProcessor();
-
-        ap.Input();
-        Console.WriteLine("Mang ban dau:");
-        ap.Display();
-
-        // Bubble Sort
-        ap.BubbleSort();
-        Console.WriteLine("Mang sau Bubble Sort:");
-        ap.Display();
-
-        // Quick Sort
-        int[] arrCopy = (int[])ap.GetArray().Clone();
-        ArrayProcessor apQuick = new ArrayProcessor();
-        apQuick.SetArray(arrCopy);
-
-        apQuick.QuickSort(0, arrCopy.Length - 1);
-        Console.WriteLine("Mang sau Quick Sort:");
-        apQuick.Display();
-
-        // Search
-        Console.Write("Nhap so can tim: ");
-        int key = int.Parse(Console.ReadLine());
-
-        int posLinear = ap.LinearSearch(key);
-        if (posLinear != -1)
-            Console.WriteLine($"Linear Search: Tim thay {key} tai vi tri {posLinear}");
-        else
-            Console.WriteLine("Linear Search: Khong tim thay");
-
-        int posBinary = ap.BinarySearch(key);
-        if (posBinary != -1)
-            Console.WriteLine($"Binary Search: Tim thay {key} tai vi tri {posBinary}");
-        else
-            Console.WriteLine("Binary Search: Khong tim thay");
+        TextProcessor tp = new TextProcessor();
+        tp.Input();
+        tp.Normalize();
+        tp.DisplayResult();
     }
 }

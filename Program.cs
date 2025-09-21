@@ -1,178 +1,148 @@
 ﻿using System;
 
-namespace HelloWorld
+class ArrayProcessor
 {
-    class MaTran
+    private int[] arr;
+
+    // Nhap mang tu ban phim
+    public void Input()
     {
-        // Thuộc tính số dòng và số cột
-        private int dong, cot;
-        private int[,] data;
-
-        // Hàm nhập ma trận
-        public void NhapMaTran()
+        Console.Write("Nhap so phan tu cua mang: ");
+        int n = int.Parse(Console.ReadLine());
+        arr = new int[n];
+        for (int i = 0; i < n; i++)
         {
-            Console.Write("Nhap so dong");
-            dong = int.Parse(Console.ReadLine());
-            Console.Write("Nhap so cot:");
-            cot = int.Parse(Console.ReadLine());
-
-            data = new int[dong, cot];
-
-            for (int i = 0; i < dong; i++)
-            {
-                for (int j = 0; j < cot; j++)
-                {
-                    Console.Write("Nhap phan tu [{0},{1}]: ", i, j);
-                    data[i, j] = int.Parse(Console.ReadLine());
-                }
-            }
-        }
-
-        // Hàm in ma trận
-        public void InMaTran()
-        {
-            for (int i = 0; i < dong; i++)
-            {
-                for (int j = 0; j < cot; j++)
-                {
-                    Console.Write(data[i, j] + "\t");
-                }
-                Console.WriteLine();
-            }
-        }
-
-        // Getter để lấy mảng
-        public int[,] GetData() => data;
-        public int GetDong() => dong;
-        public int GetCot() => cot;
-
-        // Cộng 2 ma trận
-        public static MaTran Cong(MaTran A, MaTran B)
-        {
-            if (A.dong != B.dong || A.cot != B.cot)
-            {
-                Console.WriteLine("Khong the cong 2 ma tran khac kih thuoc");
-                return null;
-            }
-
-            MaTran C = new MaTran();
-            C.dong = A.dong;
-            C.cot = A.cot;
-            C.data = new int[C.dong, C.cot];
-
-            for (int i = 0; i < C.dong; i++)
-            {
-                for (int j = 0; j < C.cot; j++)
-                {
-                    C.data[i, j] = A.data[i, j] + B.data[i, j];
-                }
-            }
-
-            return C;
-        }
-
-        // Nhân 2 ma trận
-        public static MaTran Nhan(MaTran A, MaTran B)
-        {
-            if (A.cot != B.dong)
-            {
-                Console.WriteLine("Khong the nhan (so cot A phai bang so dong B)!");
-                return null;
-            }
-
-            MaTran C = new MaTran();
-            C.dong = A.dong;
-            C.cot = B.cot;
-            C.data = new int[C.dong, C.cot];
-
-            for (int i = 0; i < C.dong; i++)
-            {
-                for (int j = 0; j < C.cot; j++)
-                {
-                    C.data[i, j] = 0;
-                    for (int k = 0; k < A.cot; k++)
-                    {
-                        C.data[i, j] += A.data[i, k] * B.data[k, j];
-                    }
-                }
-            }
-            return C;
-        }
-
-        // Chuyển vị
-        public MaTran ChuyenVi()
-        {
-            MaTran T = new MaTran();
-            T.dong = cot;
-            T.cot = dong;
-            T.data = new int[T.dong, T.cot];
-
-            for (int i = 0; i < dong; i++)
-            {
-                for (int j = 0; j < cot; j++)
-                {
-                    T.data[j, i] = data[i, j];
-                }
-            }
-            return T;
-        }
-
-        // Tìm max và min
-        public void TimMaxMin()
-        {
-            int max = data[0, 0];
-            int min = data[0, 0];
-
-            for (int i = 0; i < dong; i++)
-            {
-                for (int j = 0; j < cot; j++)
-                {
-                    if (data[i, j] > max) max = data[i, j];
-                    if (data[i, j] < min) min = data[i, j];
-                }
-            }
-
-            Console.WriteLine("Gia tri lon nhat: " + max);
-            Console.WriteLine("Gia tri nho nhat: " + min);
+            Console.Write($"arr[{i}] = ");
+            arr[i] = int.Parse(Console.ReadLine());
         }
     }
 
-    class Program
+    // Hien thi mang
+    public void Display()
     {
-        static void Main(string[] args)
+        foreach (int x in arr)
         {
-            Console.WriteLine("Nhap ma tran A:");
-            MaTran A = new MaTran();
-            A.NhapMaTran();
-
-            Console.WriteLine("\nNhap ma tran B:");
-            MaTran B = new MaTran();
-            B.NhapMaTran();
-
-            Console.WriteLine("\nMa tran A:");
-            A.InMaTran();
-
-            Console.WriteLine("\nMa tran B:");
-            B.InMaTran();
-
-            Console.WriteLine("\nA + B:");
-            MaTran C = MaTran.Cong(A, B);
-            if (C != null) C.InMaTran();
-
-            Console.WriteLine("\nA × B:");
-            MaTran D = MaTran.Nhan(A, B);
-            if (D != null) D.InMaTran();
-
-            Console.WriteLine("\nChuyen vi cua A:");
-            MaTran AT = A.ChuyenVi();
-            AT.InMaTran();
-
-            Console.WriteLine("\nTim max/min trong A:");
-            A.TimMaxMin();
+            Console.Write(x + " ");
         }
+        Console.WriteLine();
+    }
+
+    // Bubble Sort
+    public void BubbleSort()
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n - 1; i++)
+        {
+            for (int j = 0; j < n - i - 1; j++)
+            {
+                if (arr[j] > arr[j + 1])
+                {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    // Quick Sort
+    public void QuickSort(int left, int right)
+    {
+        int i = left, j = right;
+        int pivot = arr[(left + right) / 2];
+
+        while (i <= j)
+        {
+            while (arr[i] < pivot) i++;
+            while (arr[j] > pivot) j--;
+            if (i <= j)
+            {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+                i++;
+                j--;
+            }
+        }
+
+        if (left < j) QuickSort(left, j);
+        if (i < right) QuickSort(i, right);
+    }
+
+    // Linear Search
+    public int LinearSearch(int key)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            if (arr[i] == key)
+                return i;
+        }
+        return -1;
+    }
+
+    // Binary Search
+    public int BinarySearch(int key)
+    {
+        int left = 0, right = arr.Length - 1;
+        while (left <= right)
+        {
+            int mid = (left + right) / 2;
+            if (arr[mid] == key) return mid;
+            else if (arr[mid] < key) left = mid + 1;
+            else right = mid - 1;
+        }
+        return -1;
+    }
+
+    public int[] GetArray()
+    {
+        return arr;
+    }
+
+    public void SetArray(int[] newArr)
+    {
+        arr = newArr;
     }
 }
 
+class Program
+{
+    static void Main(string[] args)
+    {
+        ArrayProcessor ap = new ArrayProcessor();
 
+        ap.Input();
+        Console.WriteLine("Mang ban dau:");
+        ap.Display();
 
+        // Bubble Sort
+        ap.BubbleSort();
+        Console.WriteLine("Mang sau Bubble Sort:");
+        ap.Display();
 
+        // Quick Sort
+        int[] arrCopy = (int[])ap.GetArray().Clone();
+        ArrayProcessor apQuick = new ArrayProcessor();
+        apQuick.SetArray(arrCopy);
+
+        apQuick.QuickSort(0, arrCopy.Length - 1);
+        Console.WriteLine("Mang sau Quick Sort:");
+        apQuick.Display();
+
+        // Search
+        Console.Write("Nhap so can tim: ");
+        int key = int.Parse(Console.ReadLine());
+
+        int posLinear = ap.LinearSearch(key);
+        if (posLinear != -1)
+            Console.WriteLine($"Linear Search: Tim thay {key} tai vi tri {posLinear}");
+        else
+            Console.WriteLine("Linear Search: Khong tim thay");
+
+        int posBinary = ap.BinarySearch(key);
+        if (posBinary != -1)
+            Console.WriteLine($"Binary Search: Tim thay {key} tai vi tri {posBinary}");
+        else
+            Console.WriteLine("Binary Search: Khong tim thay");
+    }
+}
